@@ -87,7 +87,7 @@ elif task_ == 'Update Medicine':
         schedule_8am = st.checkbox("8 AM", value=bool(selected_medicine[3]), key="update_schedule_8am")
         schedule_1pm = st.checkbox("1 PM", value=bool(selected_medicine[4]), key="update_schedule_1pm")
         schedule_8pm = st.checkbox("8 PM", value=bool(selected_medicine[5]), key="update_schedule_8pm")
-        intended_duration_days = st.number_input("Intended Duration (days)", min_value=1,
+        intended_duration_days = st.number_input("Intended Duration (days)", min_value=0,
                                                  value=int(selected_medicine[6]),
                                                  key="update_intended_duration")
         doses_left = st.number_input("Current Doses Left", min_value=0, value=int(selected_medicine[7]),  # Cast to int
