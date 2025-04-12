@@ -63,18 +63,18 @@ elif task_ == 'Update Medicine':
     with st.sidebar.form("update_medicine_form"):
         generic_name = st.text_input("Generic Name", value=selected_medicine[1], key="update_generic_name")
         brand_name = st.text_input("Brand Name (optional)", value=selected_medicine[2] or "", key="update_brand_name")
-        schedule_8am = st.checkbox("8 AM", value=selected_medicine[3], key="update_schedule_8am")
-        schedule_1pm = st.checkbox("1 PM", value=selected_medicine[4], key="update_schedule_1pm")
-        schedule_8pm = st.checkbox("8 PM", value=selected_medicine[5], key="update_schedule_8pm")
-        intended_duration_days = st.number_input("Intended Duration (days)", min_value=1, value=selected_medicine[6],
+        schedule_8am = st.checkbox("8 AM", value=bool(selected_medicine[3]), key="update_schedule_8am")
+        schedule_1pm = st.checkbox("1 PM", value=bool(selected_medicine[4]), key="update_schedule_1pm")
+        schedule_8pm = st.checkbox("8 PM", value=bool(selected_medicine[5]), key="update_schedule_8pm")
+        intended_duration_days = st.number_input("Intended Duration (days)", min_value=1, value=int(selected_medicine[6]),
                                                  key="update_intended_duration")
-        doses_left = st.number_input("Current Doses Left", min_value=0, value=selected_medicine[7],
+        doses_left = st.number_input("Current Doses Left", min_value=0, value=int(selected_medicine[7]),  # Cast to int
                                      key="update_doses_left")
-        price = st.number_input("Price", min_value=0.0, format="%.2f", value=selected_medicine[8] or 0,
+        price = st.number_input("Price", min_value=0.0, format="%.2f", value=float(selected_medicine[8] or 0),  # Cast to float
                                 key="update_price")
         notes = st.text_area("Notes (optional)", value=selected_medicine[9] or "", key="update_notes")
-
         update_button = st.form_submit_button("Update")
+
         if update_button:
             update_data = {}
             if generic_name != selected_medicine[1]:
