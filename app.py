@@ -3,6 +3,20 @@ from methods import *
 create_table()
 conn = create_connection()
 
+page_bg_img = """
+<style>
+[data-testid="stAppViewContainer"]{background-color: #FFB6C1;
+opacity: 0.8;
+background: linear-gradient(135deg, #FFB6C955 25%, transparent 25%) -10px 0/ 20px 20px, 
+linear-gradient(225deg, #FFB6C9 25%, transparent 25%) -10px 0/ 20px 20px, 
+linear-gradient(315deg, #FFB6C955 25%, transparent 25%) 0px 0/ 20px 20px, 
+linear-gradient(45deg, #FFB6C9 25%, #FFB6C1 25%) 0px 0/ 20px 20px;
+}
+</style>
+"""
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
 st.title('Meds Tracker & Inventory')
 st.subheader(f'Date: {datetime.now().strftime("%m-%d-%Y")}')
 
