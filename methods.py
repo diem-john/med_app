@@ -1,7 +1,7 @@
 import sqlite3
 import pandas as pd
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Global Variable
 DATABASE_NAME = 'med_tracker_inventory_final.db'
@@ -36,7 +36,7 @@ def create_table():
                 doses_left INTEGER NOT NULL DEFAULT 0,
                 price REAL,
                 notes TEXT,
-                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                last_updated TEXT
             )
         """)
         conn.commit()
@@ -50,7 +50,7 @@ def create_table():
 def add_medicine(conn, medicine):
     """Adds a new medicine."""
     sql = '''INSERT INTO Medicines(generic_name, brand_name, schedule_8am, schedule_1pm, schedule_8pm, 
-    intended_duration_days, doses_left, price, notes) VALUES(?,?,?,?,?,?,?,?,?)'''
+    intended_duration_days, doses_left, price, notes, last_updated) VALUES(?,?,?,?,?,?,?,?,?,?)'''
     cursor = conn.cursor()
     try:
         cursor.execute(sql, medicine)
@@ -63,8 +63,8 @@ def add_medicine(conn, medicine):
 
 def update_medicine(conn, medicine_id, update_data):
     """Updates an existing medicine, only changing the fields provided in update_data."""
-    sql_parts = ["UPDATE Medicines SET last_updated = CURRENT_TIMESTAMP"]
-    values = []
+    sql_parts = ["UPDATE Medicines SET last_updated = ?"]
+    values = [datetime.now().strftime("%m%d%Y")]
     if update_data.get("generic_name") is not None:
         sql_parts.append(", generic_name = ?")
         values.append(update_data["generic_name"])
@@ -127,6 +127,15 @@ def calculate_to_buy(doses_per_day, doses_left, intended_days):
     return max(0, to_buy)
 
 
+def calculate_days_available(doses_per_day, doses_left):
+    """Calculates the number of days the current stock will last."""
+    if doses_per_day > 0 and doses_left >= 0:
+        return doses_left // doses_per_day
+    elif doses_left < 0:
+        return 0
+    else:
+        return 0
+
 def medicines_to_dictionaries(medicines):
     """Converts a list of medicine tuples to a list of dictionaries,
     calculating computed columns."""
@@ -149,27 +158,38 @@ def medicines_to_dictionaries(medicines):
             f"{'8AM' if sch_8am else ''} {'1PM' if sch_1pm else ''} {'8PM' if sch_8pm else ''}"
         ).strip()
         doses_per_day = calculate_doses_per_day(sch_8am, sch_1pm, sch_8pm)
-        to_buy = calculate_to_buy(doses_per_day, left, intended_days)
+
+        # Calculate days since last update
+        try:
+            last_updated_date = datetime.strptime(last_updated, "%m%d%Y")
+            current_date = datetime.now()
+            days_since_update = (current_date.date() - last_updated_date.date()).days
+        except ValueError:
+            days_since_update = 0  # Handle cases where last_updated is invalid
+
+        # Adjust intended days and doses left
+        adjusted_intended_days = max(0, intended_days - days_since_update, 0)
+        adjusted_left = max(0, left - (doses_per_day * days_since_update), 0)
+
+        to_buy = calculate_to_buy(doses_per_day, adjusted_left, adjusted_intended_days)
         price_per_day = doses_per_day * price if price is not None else 0
 
-        # Format the timestamp for display
-        if last_updated:
-            last_updated_formatted = datetime.fromisoformat(last_updated).strftime("%m%d%Y")
-        else:
-            last_updated_formatted = ""  # Or some default value
+        # Calculate days remaining
+        days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
             "Medicine ID": medicine_id,
             "Medicine": generic_name,
             "Brand": brand_name,
             "Schedule": schedule_str,
-            "Intended Days": intended_days,
-            "Left": left,
+            "Intended Days": adjusted_intended_days,
+            "Left": adjusted_left,
             "Price": price,
             "Price Per Day": price_per_day,
             "To Buy": to_buy,
             "Notes": notes,
-            "Last Updated": last_updated_formatted,
+            "Last Updated": last_updated,
+            "Days Remaining": days_remaining,  # Add Days Remaining
         }
         medicine_dicts.append(medicine_dict)
     return medicine_dicts
@@ -210,6 +230,7 @@ def calculate_total_to_buy_price(conn):
         if to_buy > 0 and med[8] is not None:  # Check if price is not None
             total_price += to_buy * med[8]
     return total_price
+
 
 def converter(variable):
     if not variable:
