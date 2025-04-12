@@ -86,14 +86,8 @@ elif task_ == 'Update Medicine':
               update_data["schedule_8am"] = converter(schedule_8am)
             if converter(schedule_1pm) != selected_medicine[4]:
               update_data["schedule_1pm"] = converter(schedule_1pm)
-            try: 
-              if converter(schedule_8pm) != selected_medicine[5]:
-                st.write(f'{converter(schedule_8pm)} vs. {selected_medicine[5]}')
-                st.write(f'{type(converter(schedule_8pm))} vs. {type(selected_medicine[5])}')
-                st.error(schedule_8pm)
-                update_data["schedule_8pm"] = converter(schedule_8pm)
-            except Exception as e: 
-              st.error(e)
+            if converter(schedule_8pm) != selected_medicine[5]:
+              update_data["schedule_8pm"] = converter(schedule_8pm)
             if intended_duration_days != selected_medicine[6]:
               update_data["intended_duration_days"] = intended_duration_days
             if doses_left != selected_medicine[7]:
@@ -102,6 +96,8 @@ elif task_ == 'Update Medicine':
               update_data["price"] = price
               if notes != selected_medicine[9]:
                 update_data["notes"] = notes
+                
+            st.text(update_data)
 
             if update_data:  # Only update if there are changes
                 if update_medicine(conn, medicine_id_to_update, update_data):
