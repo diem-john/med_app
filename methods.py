@@ -64,7 +64,7 @@ def add_medicine(conn, medicine):
 def update_medicine(conn, medicine_id, update_data):
     """Updates an existing medicine, only changing the fields provided in update_data."""
     sql_parts = ["UPDATE Medicines SET last_updated = ?"]
-    values = [datetime.now().strftime("%m%d%Y")]
+    values = [datetime.now().strftime("%d-%m-%Y")]  # Use DD-MM-YYYY format
     if update_data.get("generic_name") is not None:
         sql_parts.append(", generic_name = ?")
         values.append(update_data["generic_name"])
@@ -136,7 +136,8 @@ def calculate_days_available(doses_per_day, doses_left):
     else:
         return 0
 
-def medicines_to_dictionaries(medicines):
+
+def medicines_to_dictionaries(medicines, current_date):
     """Converts a list of medicine tuples to a list of dictionaries,
     calculating computed columns."""
     medicine_dicts = []
@@ -162,8 +163,7 @@ def medicines_to_dictionaries(medicines):
         # Calculate days since last update
         try:
             last_updated_date = datetime.strptime(last_updated, "%m%d%Y")
-            current_date = datetime.now()
-            days_since_update = (current_date.date() - last_updated_date.date()).days
+            days_since_update = (current_date - last_updated_date).days
         except ValueError:
             days_since_update = 0  # Handle cases where last_updated is invalid
 
@@ -178,36 +178,35 @@ def medicines_to_dictionaries(medicines):
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine": generic_name,  # Changed from "Medicine"
+            "Medicine": f"**{generic_name}**",  # Bold the Medicine name
             "Schedule": schedule_str,
             "Intended Days": adjusted_intended_days,
-            "Remaining Days": days_remaining,  # Changed from "Days Remaining"
+            "Remaining Days": days_remaining,
             "Left": adjusted_left,
+            "Price": price,  # Price Per Piece
+            "Price Per Day": price_per_day,
             "To Buy": to_buy,
             "Notes": notes,
-            "Price per Piece": price,
-            "Price Per Day": price_per_day,
             "Last Updated": last_updated,
         }
         medicine_dicts.append(medicine_dict)
     return medicine_dicts
 
 
-def bold_column(df, col_name):
-    return df.style.applymap(lambda x: 'font-weight: bold;', subset=[col_name])
-
-
-def display_inventory_streamlit(conn):
+def display_inventory_streamlit(conn, current_date):
     """Displays the medicine inventory using Streamlit."""
     medicines = get_all_medicines(conn)
     if not medicines:
         st.warning("No medicines in the inventory.")
         return
 
-    medicine_dicts = medicines_to_dictionaries(medicines)
+    medicine_dicts = medicines_to_dictionaries(medicines, current_date=current_date)
     df = pd.DataFrame(medicine_dicts)
-    styled_df = bold_column(df, 'Medicine')
-    st.dataframe(styled_df)
+
+    # Reorder columns for display
+    df = df[["Medicine", "Schedule", "Intended Days", "Remaining Days", "Left", "Price", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
+
+    st.dataframe(df)
 
 
 def delete_medicine_by_name(conn, medicine_name):
