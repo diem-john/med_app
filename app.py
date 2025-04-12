@@ -67,46 +67,71 @@ elif task_ == 'Update Medicine':
         schedule_8am = st.checkbox("8 AM", value=bool(selected_medicine[3]), key="update_schedule_8am")
         schedule_1pm = st.checkbox("1 PM", value=bool(selected_medicine[4]), key="update_schedule_1pm")
         schedule_8pm = st.checkbox("8 PM", value=bool(selected_medicine[5]), key="update_schedule_8pm")
-        intended_duration_days = st.number_input("Intended Duration (days)", min_value=1, value=int(selected_medicine[6]),
+        intended_duration_days = st.number_input("Intended Duration (days)", min_value=1,
+                                                 value=int(selected_medicine[6]),
                                                  key="update_intended_duration")
         doses_left = st.number_input("Current Doses Left", min_value=0, value=int(selected_medicine[7]),  # Cast to int
                                      key="update_doses_left")
-        price = st.number_input("Price", min_value=0.0, format="%.2f", value=float(selected_medicine[8] or 0),  # Cast to float
+        price = st.number_input("Price", min_value=0.0, format="%.2f", value=float(selected_medicine[8] or 0),
+                                # Cast to float
                                 key="update_price")
         notes = st.text_area("Notes (optional)", value=selected_medicine[9] or "", key="update_notes")
-      
+
         update_button = st.form_submit_button("Update")
         if update_button:
             update_data = {}
             if generic_name != selected_medicine[1]:
-              update_data["generic_name"] = generic_name
-            if brand_name != selected_medicine[2]:
-              update_data["brand_name"] = brand_name
-            if converter(schedule_8am) != selected_medicine[3]:
-              update_data["schedule_8am"] = converter(schedule_8am)
-            if converter(schedule_1pm) != selected_medicine[4]:
-              update_data["schedule_1pm"] = converter(schedule_1pm)
-            if converter(schedule_8pm) != selected_medicine[5]:
-              update_data["schedule_8pm"] = converter(schedule_8pm)
-            if intended_duration_days != selected_medicine[6]:
-              update_data["intended_duration_days"] = intended_duration_days
-            if doses_left != selected_medicine[7]:
-              update_data["doses_left"] = doses_left
-            if price != selected_medicine[8]:
-              update_data["price"] = price
-              if notes != selected_medicine[9]:
-                update_data["notes"] = notes
-                
-            st.text(update_data)
+                update_data["generic_name"] = generic_name
+            elif generic_name == selected_medicine[1]:
+                update_data["generic_name"] = selected_medicine[1]
 
-            if update_data:  # Only update if there are changes
+            if brand_name != selected_medicine[2]:
+                update_data["brand_name"] = brand_name
+            elif generic_name == selected_medicine[3]:
+                update_data["brand_name"] = selected_medicine[2]
+
+            if converter(schedule_8am) != selected_medicine[3]:
+                update_data["schedule_8am"] = converter(schedule_8am)
+            elif generic_name == selected_medicine[3]:
+                update_data["schedule_8am"] = selected_medicine[3]
+
+            if converter(schedule_1pm) != selected_medicine[4]:
+                update_data["schedule_1pm"] = converter(schedule_1pm)
+            elif generic_name == selected_medicine[4]:
+                update_data["schedule_1pm"] = selected_medicine[4]
+
+            if converter(schedule_8pm) != selected_medicine[5]:
+                update_data["schedule_8pm"] = converter(schedule_8pm)
+            elif generic_name == selected_medicine[5]:
+                update_data["schedule_8pm"] = selected_medicine[5]
+
+            if intended_duration_days != selected_medicine[6]:
+                update_data["intended_duration_days"] = intended_duration_days
+            elif generic_name == selected_medicine[6]:
+                update_data["intended_duration_days"] = selected_medicine[6]
+
+            if doses_left != selected_medicine[7]:
+                update_data["doses_left"] = doses_left
+            elif generic_name == selected_medicine[7]:
+                update_data["doses_left"] = selected_medicine[7]
+
+            if price != selected_medicine[8]:
+                update_data["price"] = price
+            elif generic_name == selected_medicine[8]:
+                update_data["price"] = selected_medicine[8]
+
+            if notes != selected_medicine[9]:
+                update_data["notes"] = notes
+            elif generic_name == selected_medicine[9]:
+                update_data["notes"] = selected_medicine[9]
+
+            if update_data:
                 if update_medicine(conn, medicine_id_to_update, update_data):
                     st.success("Medicine updated successfully!")
                     display_inventory_streamlit(conn)
                 else:
                     st.error("Failed to update medicine.")
-            else:
-                st.info("No changes were made.")
+
 elif task_ == 'Delete Item':
     st.sidebar.header("Delete Medicine by ID")
     medicines = get_all_medicines(conn)
