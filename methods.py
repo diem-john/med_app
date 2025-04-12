@@ -181,7 +181,7 @@ def medicines_to_dictionaries(medicines, current_date):
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine": f"**{generic_name}**",  # Bold the Medicine name
+            "Medicine": f"{generic_name}",  # Bold the Medicine name
             "Schedule": schedule_str,
             "Intended Days": adjusted_intended_days,
             "Remaining Days": days_remaining,
