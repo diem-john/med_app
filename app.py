@@ -124,7 +124,7 @@ elif task_ == 'Update Medicine':
                 update_data["notes"] = notes
             elif generic_name == selected_medicine[9]:
                 update_data["notes"] = selected_medicine[9]
-
+            st.text(update_data)
             if update_data:
                 if update_medicine(conn, medicine_id_to_update, update_data):
                     st.success("Medicine updated successfully!")
