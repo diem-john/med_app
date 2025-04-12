@@ -178,7 +178,7 @@ def medicines_to_dictionaries(medicines):
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine": f"**{generic_name}**",  # Changed from "Medicine"
+            "Medicine": generic_name,  # Changed from "Medicine"
             "Schedule": schedule_str,
             "Intended Days": adjusted_intended_days,
             "Remaining Days": days_remaining,  # Changed from "Days Remaining"
@@ -192,6 +192,10 @@ def medicines_to_dictionaries(medicines):
     return medicine_dicts
 
 
+def bold_column(df, col_name):
+    return df.style.applymap(lambda x: 'font-weight: bold;', subset=[col_name])
+
+
 def display_inventory_streamlit(conn):
     """Displays the medicine inventory using Streamlit."""
     medicines = get_all_medicines(conn)
@@ -201,8 +205,8 @@ def display_inventory_streamlit(conn):
 
     medicine_dicts = medicines_to_dictionaries(medicines)
     df = pd.DataFrame(medicine_dicts)
-
-    st.dataframe(df)
+    styled_df = bold_column(df, 'Medicine')
+    st.dataframe(styled_df)
 
 
 def delete_medicine_by_name(conn, medicine_name):
