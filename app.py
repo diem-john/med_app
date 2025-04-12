@@ -79,25 +79,25 @@ elif task_ == 'Update Medicine':
         if update_button:
             update_data = {}
             if generic_name != selected_medicine[1]:
-                update_data["generic_name"] = generic_name
+              update_data["generic_name"] = generic_name
             if brand_name != selected_medicine[2]:
-                update_data["brand_name"] = brand_name
+              update_data["brand_name"] = brand_name
             if converter(schedule_8am) != selected_medicine[3]:
-                update_data["schedule_8am"] = converter(schedule_8am)
+              update_data["schedule_8am"] = converter(schedule_8am)
             if converter(schedule_1pm) != selected_medicine[4]:
-                update_data["schedule_1pm"] = converter(schedule_1pm)
-            #if converter(schedule_8pm) != selected_medicine[5]:
-            #    st.write(f'{converter(schedule_8pm)} vs. {selected_medicine[5]}')
-            #    st.write(f'{type(converter(schedule_8pm))} vs. {type(selected_medicine[5])}')
-            #    st.error(schedule_8pm)
-            #    update_data["schedule_8pm"] = converter(schedule_8pm)
+              update_data["schedule_1pm"] = converter(schedule_1pm)
+            if converter(schedule_8pm) != selected_medicine[5]:
+              st.write(f'{converter(schedule_8pm)} vs. {selected_medicine[5]}')
+              st.write(f'{type(converter(schedule_8pm))} vs. {type(selected_medicine[5])}')
+              st.error(schedule_8pm)
+              update_data["schedule_8pm"] = converter(schedule_8pm)
             if intended_duration_days != selected_medicine[6]:
-                update_data["intended_duration_days"] = intended_duration_days
+              update_data["intended_duration_days"] = intended_duration_days
             if doses_left != selected_medicine[7]:
-                update_data["doses_left"] = doses_left
+              update_data["doses_left"] = doses_left
             if price != selected_medicine[8]:
-                update_data["price"] = price
-            if notes != selected_medicine[9]:
+              update_data["price"] = price
+              if notes != selected_medicine[9]:
                 update_data["notes"] = notes
 
             if update_data:  # Only update if there are changes
