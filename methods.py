@@ -185,7 +185,7 @@ def medicines_to_dictionaries(medicines):
             "Left": adjusted_left,
             "To Buy": to_buy,
             "Notes": notes,
-            "Price Per Day": round(price_per_day),
+            "Price Per Day": round(price_per_day, 2),
             "Last Updated": last_updated,
         }
         medicine_dicts.append(medicine_dict)
