@@ -127,15 +127,6 @@ def calculate_to_buy(doses_per_day, doses_left, intended_days):
     return max(0, to_buy)
 
 
-def calculate_days_available(doses_per_day, doses_left):
-    """Calculates the number of days the current stock will last."""
-    if doses_per_day > 0 and doses_left >= 0:
-        return doses_left // doses_per_day
-    elif doses_left < 0:
-        return 0
-    else:
-        return 0
-
 def medicines_to_dictionaries(medicines):
     """Converts a list of medicine tuples to a list of dictionaries,
     calculating computed columns."""
@@ -178,18 +169,15 @@ def medicines_to_dictionaries(medicines):
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine ID": medicine_id,
-            "Medicine": generic_name,
-            "Brand": brand_name,
+            "Medicine": generic_name,  # Changed from "Medicine"
             "Schedule": schedule_str,
             "Intended Days": adjusted_intended_days,
+            "Remaining Days": days_remaining,  # Changed from "Days Remaining"
             "Left": adjusted_left,
-            "Price": price,
-            "Price Per Day": price_per_day,
             "To Buy": to_buy,
             "Notes": notes,
+            "Price Per Day": price_per_day,
             "Last Updated": last_updated,
-            "Days Remaining": days_remaining,  # Add Days Remaining
         }
         medicine_dicts.append(medicine_dict)
     return medicine_dicts
