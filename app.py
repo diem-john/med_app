@@ -8,7 +8,8 @@ st.subheader(f'Date: {datetime.now().strftime("%m-%d-%Y")}')
 
 st.sidebar.title('Task Management')
 task_ = st.sidebar.selectbox('Select Task:',
-                             ('Add New Medicine',
+                             ('',
+                              'Add New Medicine',
                               'Update Medicine',
                               'Delete Item'))
 
