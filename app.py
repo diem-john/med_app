@@ -74,8 +74,8 @@ elif task_ == 'Update Medicine':
         price = st.number_input("Price", min_value=0.0, format="%.2f", value=float(selected_medicine[8] or 0),  # Cast to float
                                 key="update_price")
         notes = st.text_area("Notes (optional)", value=selected_medicine[9] or "", key="update_notes")
+      
         update_button = st.form_submit_button("Update")
-
         if update_button:
             update_data = {}
             if generic_name != selected_medicine[1]:
@@ -87,6 +87,7 @@ elif task_ == 'Update Medicine':
             if converter(schedule_1pm) != selected_medicine[4]:
                 update_data["schedule_1pm"] = converter(schedule_1pm)
             if converter(schedule_8pm) != selected_medicine[5]:
+                print(schedule_8pm)
                 update_data["schedule_8pm"] = converter(schedule_8pm)
             if intended_duration_days != selected_medicine[6]:
                 update_data["intended_duration_days"] = intended_duration_days
