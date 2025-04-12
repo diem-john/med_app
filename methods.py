@@ -67,34 +67,34 @@ def update_medicine(conn, medicine_id, update_data):
     sql_parts = ["UPDATE Medicines SET last_updated = CURRENT_TIMESTAMP"]
     values = []
     if update_data.get("generic_name") is not None:
-        sql_parts.append("generic_name = ?")
+        sql_parts.append(", generic_name = ?")
         values.append(update_data["generic_name"])
     if update_data.get("brand_name") is not None:
-        sql_parts.append("brand_name = ?")
+        sql_parts.append(", brand_name = ?")
         values.append(update_data["brand_name"])
     if update_data.get("schedule_8am") is not None:
-        sql_parts.append("schedule_8am = ?")
+        sql_parts.append(", schedule_8am = ?")
         values.append(update_data["schedule_8am"])
     if update_data.get("schedule_1pm") is not None:
-        sql_parts.append("schedule_1pm = ?")
+        sql_parts.append(", schedule_1pm = ?")
         values.append(update_data["schedule_1pm"])
     if update_data.get("schedule_8pm") is not None:
-        sql_parts.append("schedule_8pm = ?")
+        sql_parts.append(", schedule_8pm = ?")
         values.append(update_data["schedule_8pm"])
     if update_data.get("intended_duration_days") is not None:
-        sql_parts.append("intended_duration_days = ?")
+        sql_parts.append(", intended_duration_days = ?")
         values.append(update_data["intended_duration_days"])
     if update_data.get("doses_left") is not None:
-        sql_parts.append("doses_left = ?")
+        sql_parts.append(", doses_left = ?")
         values.append(update_data["doses_left"])
     if update_data.get("price") is not None:
-        sql_parts.append("price = ?")
+        sql_parts.append(", price = ?")
         values.append(update_data["price"])
     if update_data.get("notes") is not None:
-        sql_parts.append("notes = ?")
+        sql_parts.append(", notes = ?")
         values.append(update_data["notes"])
 
-    sql_parts.append("WHERE medicine_id = ?")
+    sql_parts.append(" WHERE medicine_id = ?")
     values.append(medicine_id)
 
     sql = " ".join(sql_parts)
@@ -108,52 +108,6 @@ def update_medicine(conn, medicine_id, update_data):
         return False
 
 
-def update_schedule(conn, medicine_id, schedule):
-    """Updates the schedule for a medicine."""
-    sql = ''' UPDATE Medicines
-              SET schedule_8am = ?,
-                  schedule_1pm = ?,
-                  schedule_8pm = ?
-              WHERE medicine_id = ? '''
-    cursor = conn.cursor()
-    cursor.execute(sql, (schedule[0], schedule[1], schedule[2], medicine_id))
-    conn.commit()
-    print(f"Schedule updated for medicine ID {medicine_id}")
-
-
-def update_intended_duration(conn, medicine_id, intended_duration_days):
-    """Updates the intended duration for a medicine."""
-    sql = ''' UPDATE Medicines
-              SET intended_duration_days = ?
-              WHERE medicine_id = ? '''
-    cursor = conn.cursor()
-    cursor.execute(sql, (intended_duration_days, medicine_id))
-    conn.commit()
-    print(f"Intended duration updated for medicine ID {medicine_id}")
-
-
-def update_doses_left(conn, medicine_id, doses_left):
-    """Updates the number of doses left for a medicine."""
-    sql = ''' UPDATE Medicines
-              SET doses_left = ?
-              WHERE medicine_id = ? '''
-    cursor = conn.cursor()
-    cursor.execute(sql, (doses_left, medicine_id))
-    conn.commit()
-    print(f"Doses left updated for medicine ID {medicine_id}")
-
-
-def update_notes(conn, medicine_id, notes):
-    """Updates the notes for a medicine."""
-    sql = ''' UPDATE Medicines
-              SET notes = ?
-              WHERE medicine_id = ? '''
-    cursor = conn.cursor()
-    cursor.execute(sql, (notes, medicine_id))
-    conn.commit()
-    print(f"Notes updated for medicine ID {medicine_id}")
-
-
 def get_all_medicines(conn):
     """Retrieves all medicines from the table."""
     cursor = conn.cursor()
@@ -162,26 +116,9 @@ def get_all_medicines(conn):
     return rows
 
 
-def get_medicine_by_name(conn, generic_name):
-    """Retrieves a medicine by its generic name."""
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Medicines WHERE generic_name = ?", (generic_name,))
-    return cursor.fetchone()
-
-
 def calculate_doses_per_day(schedule_8am, schedule_1pm, schedule_8pm):
     """Calculates the number of doses taken per day."""
     return schedule_8am + schedule_1pm + schedule_8pm
-
-
-def calculate_days_available(doses_per_day, doses_left):
-    """Calculates the number of days the current stock will last."""
-    if doses_per_day > 0 and doses_left >= 0:
-        return doses_left // doses_per_day
-    elif doses_left < 0:
-        return 0
-    else:
-        return 0
 
 
 def calculate_to_buy(doses_per_day, doses_left, intended_days):
@@ -274,7 +211,6 @@ def calculate_total_to_buy_price(conn):
         if to_buy > 0 and med[8] is not None:  # Check if price is not None
             total_price += to_buy * med[8]
     return total_price
-
 
 def converter(variable):
     if not variable:
