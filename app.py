@@ -79,52 +79,47 @@ elif task_ == 'Update Medicine':
 
         update_button = st.form_submit_button("Update")
         if update_button:
-            update_data = {}
-            if generic_name != selected_medicine[1]:
-                update_data["generic_name"] = generic_name
-            elif generic_name == selected_medicine[1]:
-                update_data["generic_name"] = selected_medicine[1]
-
-            if brand_name != selected_medicine[2]:
-                update_data["brand_name"] = brand_name
-            elif generic_name == selected_medicine[3]:
-                update_data["brand_name"] = selected_medicine[2]
-
-            if converter(schedule_8am) != selected_medicine[3]:
-                update_data["schedule_8am"] = converter(schedule_8am)
-            elif generic_name == selected_medicine[3]:
-                update_data["schedule_8am"] = selected_medicine[3]
-
-            if converter(schedule_1pm) != selected_medicine[4]:
-                update_data["schedule_1pm"] = converter(schedule_1pm)
-            elif generic_name == selected_medicine[4]:
-                update_data["schedule_1pm"] = selected_medicine[4]
-
-            if converter(schedule_8pm) != selected_medicine[5]:
-                update_data["schedule_8pm"] = converter(schedule_8pm)
-            elif generic_name == selected_medicine[5]:
-                update_data["schedule_8pm"] = selected_medicine[5]
-
-            if intended_duration_days != selected_medicine[6]:
-                update_data["intended_duration_days"] = intended_duration_days
-            elif generic_name == selected_medicine[6]:
-                update_data["intended_duration_days"] = selected_medicine[6]
-
-            if doses_left != selected_medicine[7]:
-                update_data["doses_left"] = doses_left
-            elif generic_name == selected_medicine[7]:
-                update_data["doses_left"] = selected_medicine[7]
-
-            if price != selected_medicine[8]:
-                update_data["price"] = price
-            elif generic_name == selected_medicine[8]:
-                update_data["price"] = selected_medicine[8]
-
-            if notes != selected_medicine[9]:
-                update_data["notes"] = notes
-            elif generic_name == selected_medicine[9]:
-                update_data["notes"] = selected_medicine[9]
-            st.dataframe(pd.dataframe(update_data))
+          update_data = {}
+          if generic_name != selected_medicine[1]:
+            update_data["generic_name"] = generic_name
+          elif generic_name == selected_medicine[1]:
+            update_data["generic_name"] = selected_medicine[1]
+          if brand_name != selected_medicine[2]:
+            update_data["brand_name"] = brand_name
+          elif generic_name == selected_medicine[3]:
+            update_data["brand_name"] = selected_medicine[2]
+          if converter(schedule_8am) != selected_medicine[3]:
+            update_data["schedule_8am"] = converter(schedule_8am)
+          elif generic_name == selected_medicine[3]:
+            update_data["schedule_8am"] = selected_medicine[3]
+          if converter(schedule_1pm) != selected_medicine[4]:
+            update_data["schedule_1pm"] = converter(schedule_1pm)
+          elif generic_name == selected_medicine[4]:
+            update_data["schedule_1pm"] = selected_medicine[4]
+          if converter(schedule_8pm) != selected_medicine[5]:
+            update_data["schedule_8pm"] = converter(schedule_8pm)
+          elif generic_name == selected_medicine[5]:
+            update_data["schedule_8pm"] = selected_medicine[5]
+          if intended_duration_days != selected_medicine[6]:
+            update_data["intended_duration_days"] = intended_duration_days
+          elif generic_name == selected_medicine[6]:
+            update_data["intended_duration_days"] = selected_medicine[6]
+          if doses_left != selected_medicine[7]:
+            update_data["doses_left"] = doses_left
+          elif generic_name == selected_medicine[7]:
+            update_data["doses_left"] = selected_medicine[7]
+          if price != selected_medicine[8]:
+            update_data["price"] = price
+          elif generic_name == selected_medicine[8]:
+            update_data["price"] = selected_medicine[8]
+          if notes != selected_medicine[9]:
+            update_data["notes"] = notes
+          elif generic_name == selected_medicine[9]:
+            update_data["notes"] = selected_medicine[9]
+          
+          df = pd.DataFrame(update_data)
+          st.dataframe(df)
+            
             if update_data:
                 if update_medicine(conn, medicine_id_to_update, update_data):
                     st.success("Medicine updated successfully!")
