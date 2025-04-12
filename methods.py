@@ -185,7 +185,7 @@ def medicines_to_dictionaries(medicines):
             "Left": adjusted_left,
             "To Buy": to_buy,
             "Notes": notes,
-            "Price Per Piece": price,
+            "Price per Piece": price,
             "Price Per Day": price_per_day,
             "Last Updated": last_updated,
         }
