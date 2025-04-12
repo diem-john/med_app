@@ -163,12 +163,10 @@ def medicines_to_dictionaries(medicines, current_date):
         # Calculate days since last update
         try:
             if not isinstance(last_updated, str):
-                last_updated = str(last_updated)  # Convert to string
-            last_updated_date = datetime.strptime(last_updated, "d-%m-%Y")
-            st.text(last_updated_date)
-            st.text(current_date)
-            
+                last_updated = str(last_updated)
+            last_updated_date = datetime.strptime(last_updated, "d-%m-%Y")            
             days_since_update = (current_date.strptime(last_updated, "%m%d%Y") - last_updated_date).days
+            last_updated = current_date.strptime(last_updated, "%m%d%Y")
         except ValueError:
             days_since_update = 0  # Handle cases where last_updated is invalid
 
