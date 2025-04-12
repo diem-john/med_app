@@ -24,21 +24,20 @@ linear-gradient(45deg, #FFB6C9 25%, #FFB6C1 25%) 0px 0/ 20px 20px;
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-st.title('meds tracker & inventory')
-st.subheader(f'Date: {datetime.now().strftime("%m-%d-%Y")}')
+st.title('Meds Tracker & Inventory')
 
-st.sidebar.title('task management')
-task_ = st.sidebar.selectbox('select task:',
+current_date = datetime.now().date()  # Get today's date
+
+st.subheader(f'Date: {current_date.strftime("%d-%m-%Y")}')
+
+st.sidebar.title('Task Management')
+task_ = st.sidebar.selectbox('Select Task:',
                              ('',
                               'Add New Medicine',
                               'Update Medicine',
                               'Delete Item'))
 
-st.sidebar.header('inventory management')
-if task_ == '':
-    image = Image.open('img/logo.JPG')
-    st.sidebar.image(image, caption='Liasaurus')
-
+st.sidebar.header('Inventory Management')
 if task_ == 'Add New Medicine':
     st.sidebar.subheader('Add New Medicine to Inventory')
     with st.sidebar.form('add_medicine_form'):
@@ -121,11 +120,12 @@ elif task_ == 'Delete Item':
     if st.sidebar.button("Delete Medicine"):
         if delete_medicine_by_name(conn, selected_medicine_name):
             st.success(f"Medicine with ID {selected_medicine_name} deleted successfully.")
+            display_inventory_streamlit(conn)
         else:
             st.error(f"Failed to delete medicine with ID {selected_medicine_name}.")
 
 st.subheader('Inventory Display')
-display_inventory_streamlit(conn)
+display_inventory_streamlit(conn, current_date=current_date)  # Pass current_date
 
 total_price_to_buy = calculate_total_to_buy_price(conn)
 st.write(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:.2f}")
