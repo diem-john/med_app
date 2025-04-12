@@ -136,7 +136,6 @@ def calculate_days_available(doses_per_day, doses_left):
     else:
         return 0
 
-
 def medicines_to_dictionaries(medicines):
     """Converts a list of medicine tuples to a list of dictionaries,
     calculating computed columns."""
@@ -179,35 +178,36 @@ def medicines_to_dictionaries(medicines):
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine": f"**{generic_name}**",
+            "Medicine": generic_name,  # Changed from "Medicine"
             "Schedule": schedule_str,
             "Intended Days": adjusted_intended_days,
-            "Remaining Days": days_remaining,
+            "Remaining Days": days_remaining,  # Changed from "Days Remaining"
             "Left": adjusted_left,
-            "Price": price,  # Price Per Piece
-            "Price Per Day": price_per_day,
             "To Buy": to_buy,
             "Notes": notes,
+            "Price Per Piece": price
+            "Price Per Day": price_per_day,
             "Last Updated": last_updated,
         }
         medicine_dicts.append(medicine_dict)
     return medicine_dicts
 
 
-def display_inventory_streamlit(conn, test_date=None):
+def bold_column(df, col_name):
+    return df.style.applymap(lambda x: 'font-weight: bold;', subset=[col_name])
+
+
+def display_inventory_streamlit(conn):
     """Displays the medicine inventory using Streamlit."""
     medicines = get_all_medicines(conn)
     if not medicines:
         st.warning("No medicines in the inventory.")
         return
 
-    medicine_dicts = medicines_to_dictionaries(medicines, test_current_date=test_date)
+    medicine_dicts = medicines_to_dictionaries(medicines)
     df = pd.DataFrame(medicine_dicts)
-
-    # Reorder columns for display
-    df = df[["Medicine", "Schedule", "Intended Days", "Remaining Days", "Left", "Price", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
-
-    st.dataframe(df)
+    styled_df = bold_column(df, 'Medicine')
+    st.dataframe(styled_df)
 
 
 def delete_medicine_by_name(conn, medicine_name):
