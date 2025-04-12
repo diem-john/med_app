@@ -38,6 +38,9 @@ task_ = st.sidebar.selectbox('Select Task:',
                               'Delete Item'))
 
 st.sidebar.header('Inventory Management')
+if task_ == '':
+    image = Image.open('img/logo.JPG')
+    st.sidebar.image(image, caption='Liasaurus')
 if task_ == 'Add New Medicine':
     st.sidebar.subheader('Add New Medicine to Inventory')
     with st.sidebar.form('add_medicine_form'):
