@@ -121,7 +121,6 @@ elif task_ == 'Delete Item':
     if st.sidebar.button("Delete Medicine"):
         if delete_medicine_by_name(conn, selected_medicine_name):
             st.success(f"Medicine with ID {selected_medicine_name} deleted successfully.")
-            display_inventory_streamlit(conn)
         else:
             st.error(f"Failed to delete medicine with ID {selected_medicine_name}.")
 
