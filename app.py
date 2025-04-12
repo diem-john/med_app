@@ -1,5 +1,12 @@
 from methods import *
 
+st.set_page_config(
+    page_title="Medicine Tracker",
+    page_icon="💊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 create_table()
 conn = create_connection()
 
@@ -14,7 +21,6 @@ linear-gradient(45deg, #FFB6C9 25%, #FFB6C1 25%) 0px 0/ 20px 20px;
 }
 </style>
 """
-
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
 st.title('Meds Tracker & Inventory')
