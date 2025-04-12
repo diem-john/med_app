@@ -163,6 +163,8 @@ def medicines_to_dictionaries(medicines, current_date):
         # Calculate days since last update
         try:
             last_updated_date = datetime.strptime(last_updated, "%m%d%Y")
+            st.text(last_updated_date)
+            st.test(current_date)
             days_since_update = (current_date.strptime(last_updated, "%m%d%Y") - last_updated_date).days
         except ValueError:
             days_since_update = 0  # Handle cases where last_updated is invalid
