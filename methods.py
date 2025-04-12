@@ -40,7 +40,6 @@ def create_table():
             )
         """)
         conn.commit()
-        st.sidebar.success("Medicine table created successfully.")
     except sqlite3.Error as e:
         st.error(f"Error creating table: {e}")
     finally:
