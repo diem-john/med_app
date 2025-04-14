@@ -24,20 +24,24 @@ linear-gradient(45deg, #FFB6C9 25%, #FFB6C1 25%) 0px 0/ 20px 20px;
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-st.title('Meds Tracker & Inventory')
+st.title('meds tracker & inventory')
 
-current_date = datetime.now().date()  # Get today's date
 
-st.subheader(f'Date: {current_date.strftime("%d-%m-%Y")}')
+# For testing
+# date_string = "12042025"
+# date_object = datetime.strptime(date_string, "%d%m%Y").date()
+current_date = datetime.now().date() # date_object #
+disp_date = datetime.now().date().strftime("%m-%d-%Y")
+st.subheader(f'Date: {disp_date}')
 
-st.sidebar.title('Task Management')
-task_ = st.sidebar.selectbox('Select Task:',
+st.sidebar.title('task management')
+task_ = st.sidebar.selectbox('select task:',
                              ('',
                               'Add New Medicine',
                               'Update Medicine',
                               'Delete Item'))
 
-st.sidebar.header('Inventory Management')
+st.sidebar.header('inventory management')
 if task_ == '':
     image = Image.open('img/logo.JPG')
     st.sidebar.image(image, caption='Liasaurus')
@@ -54,7 +58,7 @@ if task_ == 'Add New Medicine':
         price = st.number_input("Price (₱): ")
         notes = st.text_input("Enter any notes (optional): ").strip()
         medicine = (generic_name, brand_name, schedule_8am, schedule_1pm,
-                    schedule_8pm, intended_duration_days, doses_left, price, notes, datetime.now().strftime("%m%d%Y"))
+                    schedule_8pm, intended_duration_days, doses_left, price, notes, current_date)
         submit_button = st.form_submit_button("Add this entry?")
         if submit_button:
             if not generic_name:
@@ -104,9 +108,9 @@ elif task_ == 'Update Medicine':
                 "intended_duration_days": intended_duration_days,
                 "doses_left": doses_left,
                 "price": price,
+                "last_updated": current_date.strftime("%d-%m-%Y"),
                 "notes": notes,
             }
-
             if update_data:  # Only update if there are changes
                 if update_medicine(conn, medicine_id_to_update, update_data):
                     st.success("Medicine updated successfully!")
@@ -123,15 +127,14 @@ elif task_ == 'Delete Item':
     if st.sidebar.button("Delete Medicine"):
         if delete_medicine_by_name(conn, selected_medicine_name):
             st.success(f"Medicine with ID {selected_medicine_name} deleted successfully.")
-            display_inventory_streamlit(conn)
         else:
             st.error(f"Failed to delete medicine with ID {selected_medicine_name}.")
 
-st.subheader('Inventory Display')
-display_inventory_streamlit(conn, current_date=current_date)  # Pass current_date
+st.subheader('inventory display')
+display_inventory_streamlit(conn, current_date=current_date.strftime("%d%m%Y"))
 
 total_price_to_buy = calculate_total_to_buy_price(conn)
-st.write(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:.2f}")
+st.write(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:,.2f}")
 
 if conn:
     conn.close()
