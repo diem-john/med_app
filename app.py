@@ -132,9 +132,10 @@ elif task_ == 'Delete Item':
 
 st.subheader('inventory display')
 
-total_price_to_buy = calculate_total_to_buy_price(conn)
-st.success(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:,.2f}")
+
 display_inventory_streamlit(conn, current_date=current_date.strftime("%d%m%Y"))
+total_price_to_buy = calculate_total_to_buy_price(conn)
+st.write(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:,.2f}")
 
 if conn:
     conn.close()
