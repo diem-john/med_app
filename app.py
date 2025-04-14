@@ -135,7 +135,12 @@ st.subheader('inventory display')
 
 display_inventory_streamlit(conn, current_date=current_date.strftime("%d%m%Y"))
 total_price_to_buy = calculate_total_to_buy_price(conn)
-st.write(f"Total Price of Medicines to Buy: ₱{total_price_to_buy:,.2f}")
+
+formatted_price = f'<span style="color: black;">{total_price_to_buy:,.2f}</span>'
+st.markdown(f"Total Price of Medicines to Buy: ₱{formatted_price}", unsafe_allow_html=True)
+
+
+
 
 if conn:
     conn.close()
