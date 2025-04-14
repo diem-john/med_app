@@ -4,8 +4,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 
 # Global Variable
-DATABASE_NAME = 'med_tracker_inventory_final.db'
-
+DATABASE_NAME = 'med_tracker_inventory_final2.db'
 
 # Helper Functions and Methods
 def create_connection():
@@ -18,6 +17,7 @@ def create_connection():
         st.error(f"Error connecting to database: {e}")
         return None
 
+conn = create_connection()
 
 def create_table():
     """Creates the Medicines table."""
@@ -89,6 +89,9 @@ def update_medicine(conn, medicine_id, update_data):
     if update_data.get("price") is not None:
         sql_parts.append(", price = ?")
         values.append(update_data["price"])
+    if update_data.get('last_updated') is not None:
+        sql_parts.append(", last_updated = ?")
+        values.append(update_data["last_updated"])
     if update_data.get("notes") is not None:
         sql_parts.append(", notes = ?")
         values.append(update_data["notes"])
@@ -159,40 +162,63 @@ def medicines_to_dictionaries(medicines, current_date):
             f"{'8AM' if sch_8am else ''} {'1PM' if sch_1pm else ''} {'8PM' if sch_8pm else ''}"
         ).strip()
         doses_per_day = calculate_doses_per_day(sch_8am, sch_1pm, sch_8pm)
-
-        # Calculate days since last update
         try:
-            if not isinstance(last_updated, str):
-                last_updated = str(last_updated)
-            last_updated_date = datetime.strptime(last_updated, "d-%m-%Y")            
-            days_since_update = (current_date.strptime(last_updated, "%m%d%Y") - last_updated_date).days
-            last_updated = current_date.strptime(last_updated, "%m%d%Y")
-        except ValueError:
-            days_since_update = 0  # Handle cases where last_updated is invalid
+            last_updated_date = datetime.strptime(last_updated, "%Y-%m-%d").date() #convert string to date object
+        except:
+            last_updated_date = datetime.strptime(last_updated, "%d-%m-%Y").date()  # convert string to date object
+        try:
+            current_date = datetime.strptime(current_date, "%d%m%Y").date()
+        except:
+            pass
 
-        # Adjust intended days and doses left
+        formatted_current_date = current_date.strftime("%d-%m-%Y")
+        formatted_last_updated = last_updated_date.strftime("%d-%m-%Y")
+
+        # st.text(f'Current {current_date} | Last Updated {last_updated}')
+        # st.text(f'Current {type(current_date)} | Last Updated {type(last_updated_date)}')
+
+        tdiff = current_date - last_updated_date
+        days_since_update = int(tdiff.days)
+        # st.text(f'Days Since Last Update: {days_since_update}')
+
         adjusted_intended_days = max(0, intended_days - days_since_update, 0)
         adjusted_left = max(0, left - (doses_per_day * days_since_update), 0)
-
         to_buy = calculate_to_buy(doses_per_day, adjusted_left, adjusted_intended_days)
         price_per_day = doses_per_day * price if price is not None else 0
-
-        # Calculate days remaining
         days_remaining = calculate_days_available(doses_per_day, adjusted_left)
 
         medicine_dict = {
-            "Medicine": f"{generic_name}",  # Bold the Medicine name
+            "Medicine": f"{generic_name}",
             "Schedule": schedule_str,
-            "Intended Days": adjusted_intended_days,
-            "Remaining Days": days_remaining,
-            "Left": adjusted_left,
-            "Price": price,  # Price Per Piece
+            "Prescribed Days": adjusted_intended_days,
+            "Stock Remaining (Days)": days_remaining,
+            "Stocks Left (Item)": adjusted_left,
+            "Price per Piece": price,  # Price Per Piece
             "Price Per Day": price_per_day,
             "To Buy": to_buy,
             "Notes": notes,
-            "Last Updated": last_updated,
+            "Last Updated": current_date,
         }
         medicine_dicts.append(medicine_dict)
+
+        if days_remaining < 3:
+            st.warning(f'Stock for {generic_name} low, please restock.')
+
+        if days_since_update > 0:
+            update_data = {
+                "generic_name": generic_name,
+                "brand_name": med[2],
+                "schedule_8am": med[3],
+                "schedule_1pm": med[4],
+                "schedule_8pm": med[5],
+                "intended_duration_days": adjusted_intended_days,
+                "doses_left": adjusted_left,
+                "price": price,
+                "last_updated": current_date,
+                "notes": notes,
+            }
+            update_medicine(conn, med[0], update_data)
+
     return medicine_dicts
 
 
@@ -207,7 +233,7 @@ def display_inventory_streamlit(conn, current_date):
     df = pd.DataFrame(medicine_dicts)
 
     # Reorder columns for display
-    df = df[["Medicine", "Schedule", "Intended Days", "Remaining Days", "Left", "Price", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
+    df = df[["Medicine", "Schedule", "Prescribed Days", "Stock Remaining (Days)", "Stocks Left (Item)", "Price per Piece", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
 
     st.dataframe(df)
 
