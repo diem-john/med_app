@@ -139,6 +139,9 @@ total_price_to_buy = calculate_total_to_buy_price(conn)
 colored_sentence = f'<p style="color: black;">Total Price of Medicines to Buy: ₱{total_price_to_buy:,.2f}</p>'
 st.markdown(colored_sentence, unsafe_allow_html=True)
 
+save_table = st.button('Save as Table')
+if save_table:
+    table.to_csv(f'inventory_{current_date.strftime("%d%m%Y")}_.csv)
 
 
 
