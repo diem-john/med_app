@@ -231,6 +231,7 @@ def display_inventory_streamlit(conn, current_date):
 
     medicine_dicts = medicines_to_dictionaries(medicines, current_date=current_date)
     df = pd.DataFrame(medicine_dicts)
+    df.to_csv(f'inventory.csv')
 
     # Reorder columns for display
     df = df[["Medicine", "Schedule", "Prescribed Days", "Stock Remaining (Days)", "Stocks Left (Item)", "Price per Piece", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
