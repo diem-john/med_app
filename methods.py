@@ -239,7 +239,7 @@ def display_inventory_streamlit(conn, current_date):
     st.dataframe(df)
     inventory_csv = df.to_csv().encode("utf-8")
     st.download_button(label="Download Inventory",
-                       data=csv,
+                       data=inventory_csv,
                        file_name="data.csv",
                        mime="text/csv",
                        icon=":material/download:",)
