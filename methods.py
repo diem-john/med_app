@@ -237,6 +237,12 @@ def display_inventory_streamlit(conn, current_date):
     df = df[["Medicine", "Schedule", "Prescribed Days", "Stock Remaining (Days)", "Stocks Left (Item)", "Price per Piece", "Price Per Day", "To Buy", "Notes", "Last Updated"]]
 
     st.dataframe(df)
+    inventory_csv = df.to_csv().encode("utf-8")
+    st.download_button(label="Download Inventory",
+                       data=csv,
+                       file_name="data.csv",
+                       mime="text/csv",
+                       icon=":material/download:",)
 
 
 def delete_medicine_by_name(conn, medicine_name):
