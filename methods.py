@@ -4,7 +4,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 
 # Global Variable
-DATABASE_NAME = 'med_tracker_inventory_final2.db'
+DATABASE_NAME = 'med_tracker_inventory_final.db'
 
 # Helper Functions and Methods
 def create_connection():
